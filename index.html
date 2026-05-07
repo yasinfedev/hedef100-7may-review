@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>Hedef 100 | Strateji, Zeka ve Mantık Oyunu</title>
+    <meta name="description" content="Hedef 100 ile zihnini test et! 100 kareyi doldurmak için stratejini geliştir. Uzm. Dr. Yasin Yıldız tarafından tasarlanan beyin egzersizi ve zeka oyunu.">
+    <meta name="author" content="Uzm. Dr. Yasin Yıldız">
+    
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <div class="app-layout">
+        <aside class="side-column">
+            <div class="side-card">
+                <button class="acc-btn" onclick="togglePanel('howToPlay', 'icon1')">NASIL OYNANIR? <span id="icon1">▼</span></button>
+                <div id="howToPlay" class="acc-content">
+                    <p>• İstediğiniz kareden başlayın.<br>• Yatay/Dikeyde 3. kareye, çaprazda 2. kareye gidebilirsiniz.<br>• Hedef: 100 kareyi de doldurmak!</p>
+                </div>
+            </div>
+
+            <div class="side-card">
+                <button class="acc-btn" onclick="togglePanel('leaderboard', 'icon2')">LİDERLİK TABLOSU <span id="icon2">▼</span></button>
+                <div id="leaderboard" class="acc-content open">
+                    <table class="leaderboard-table">
+                        <thead><tr><th>Sıra</th><th>Skor</th><th>Süre</th><th>Tarih</th></tr></thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="header-logo">HEDEF 100</div>
+
+            <div class="stat-panel">
+                <div class="stat-group">
+                    <span class="stat-label">SKOR</span>
+                    <div id="score" class="stat-value">0</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-label">SÜRE</span>
+                    <div id="timer" class="stat-value">00:00</div>
+                </div>
+                <div class="stat-group">
+                    <span class="stat-label">HAK</span>
+                    <div id="undoDisplay" class="life-container life-3"></div>
+                </div>
+                <button id="musicToggle" class="music-btn playing" onclick="toggleMusic()" title="Müziği Aç/Kapat">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+
+            <div class="board-wrapper">
+                <div id="game-board"></div>
+                <div id="game-start-overlay">
+                    <button class="start-btn" onclick="startGame()">YENİ OYUN BAŞLAT</button>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button id="undoBtn" class="action-btn undo" onclick="undoMove()" disabled>GERİ AL</button>
+                <button class="action-btn reset" onclick="resetGame()">SIFIRLA</button>
+            </div>
+        </main>
+
+        <aside class="side-column">
+            <div class="ad-card-side">
+                <div class="ad-label">REKLAM</div>
+                <div class="ad-placeholder">Buraya reklam banner gelecek</div>
+            </div>
+        </aside>
+
+        <footer class="footer-container">
+            <hr class="footer-hr">
+            <nav class="footer-nav">
+                <a href="hakkimizda.html">Hakkımızda</a>
+                <a href="blog.html">Blog</a>
+                <a href="iletisim.html">İletişim</a>
+                <a href="kvkk.html">KVKK</a>
+                <a href="kullanim-sartlari.html">Kullanım Şartları</a>
+            </nav>
+            <p style="margin-top: 15px; opacity: 0.6; font-size: 0.8rem;">&copy; 2026 Hedef 100 - Uzm. Dr. Yasin Yıldız</p>
+        </footer>
+    </div>
+
+    <div id="resultModal">
+        <div class="result-card" id="captureArea">
+            <div class="soft-bg-text">100</div>
+            <div class="result-content">
+                <h2 style="font-family: Orbitron; font-size: 1.2rem; color: var(--primary);">HEDEF 100</h2>
+                <div class="result-score" id="finalScoreText">0</div>
+                <p id="funMessageText" style="font-weight: 600; color: var(--primary); margin: 15px 0;"></p>
+                <div style="font-size: 0.8rem; margin-bottom: 20px; opacity: 0.7;">
+                    Süre: <span id="finalTimeText">00:00</span> | Tarih: <span id="finalDateText"></span>
+                </div>
+            </div>
+            <div class="modal-btns" style="position: relative; z-index: 2; display: flex; gap: 10px; width: 100%; padding: 0 10px;">
+                <button style="background: var(--success); flex:1;" onclick="generateAndShare()">📱 PAYLAŞ / KAYDET</button>
+                <button style="background: var(--danger); flex:0.4;" onclick="closeModal()">KAPAT</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop src="hedef100-background-music-8bit-90sec.mp3"></audio>
+
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+</html>
